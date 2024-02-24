@@ -19,6 +19,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v3
+
       - name: Create fonts directory in the repository
         run: mkdir -p $GITHUB_WORKSPACE/fonts
 
@@ -30,13 +33,7 @@ jobs:
           unzip $GITHUB_WORKSPACE/fonts/Atkinson-Hyperlegible-Font-Print-and-Web-2020-0514.zip -d $GITHUB_WORKSPACE/fonts/atkinsonhyperlegible
 
       - name: Compile Typst to PDF
-        uses: jannekem/run-python-script-action@v1
-        with:
-          script: |
-            import os
-            print("Directory contents:")
-            for f in os.listdir():
-                print(f)
+        run: python3 .github/workflows/compile.py
 
       - name: Remove Fonts from Repository
         run: rm -rf $GITHUB_WORKSPACE/fonts
