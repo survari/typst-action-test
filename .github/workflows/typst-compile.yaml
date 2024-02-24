@@ -24,7 +24,7 @@ jobs:
 
       - name: Download and Extract Fonts
         run: |
-          wget -P $GITHUB_WORKSPACE/fonts https://github.com/firamath/firamath/releases/download/v0.4-beta-1/firamath-specimen.pdf
+          wget -P $GITHUB_WORKSPACE/fonts https://github.com/firamath/firamath/releases/download/v0.4-beta-1/firamath-specimen.zip
           unzip $GITHUB_WORKSPACE/fonts/firamath-specimen.pdf -d $GITHUB_WORKSPACE/fonts/firamath
           wget -P $GITHUB_WORKSPACE/fonts https://brailleinstitute.org/wp-content/uploads/atkinson-hyperlegible-font/Atkinson-Hyperlegible-Font-Print-and-Web-2020-0514.zip
           unzip $GITHUB_WORKSPACE/fonts/Atkinson-Hyperlegible-Font-Print-and-Web-2020-0514.zip -d $GITHUB_WORKSPACE/fonts/atkinsonhyperlegible
