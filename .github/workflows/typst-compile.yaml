@@ -1,13 +1,48 @@
-name: Compile Typst Documents
-on: [push]
+name: Compile and Commit documentation file.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Compile Typst Files
-      uses: ammar-ahmed22/compile-typst-action@v1
-      with:
-        source_paths: 'src/main.typ src/testA.typ src/testB.typ'
-        output_paths: 'main.pdf testA.pdf testB.pdf'
-        # fonts_path: 'fonts'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Create fonts directory in the repository
+        run: mkdir -p $GITHUB_WORKSPACE/fonts
+
+      - name: Download and Extract Fonts
+        run: |
+          wget -P $GITHUB_WORKSPACE/fonts https://github.com/firamath/firamath/releases/download/v0.4-beta-1/firamath-specimen.pdf
+          unzip $GITHUB_WORKSPACE/fonts/firamath-specimen.pdf -d $GITHUB_WORKSPACE/fonts/firamath
+          wget -P $GITHUB_WORKSPACE/fonts https://brailleinstitute.org/wp-content/uploads/atkinson-hyperlegible-font/Atkinson-Hyperlegible-Font-Print-and-Web-2020-0514.zip
+          unzip $GITHUB_WORKSPACE/fonts/Atkinson-Hyperlegible-Font-Print-and-Web-2020-0514.zip -d $GITHUB_WORKSPACE/fonts/atkinsonhyperlegible
+
+      - name: Compile Typst to PDF
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os
+            print("Directory contents:")
+            for f in os.listdir():
+                print(f)
+
+      - name: Remove Fonts from Repository
+        run: rm -rf $GITHUB_WORKSPACE/fonts
+
+      - name: Commit compiled PDFs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[deploy]: compile sources to PDF'
+          file_pattern: '**/*.pdf'
